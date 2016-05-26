@@ -1,0 +1,22 @@
+#!/bin/bash
+rm  -frv lib_dir_gcc/*
+
+#ERRORS
+cd liblogerrors
+make clean -f le_makefile; make REL=1 -f le_makefile;
+
+#NETWORK
+cd ../libnetwork
+make clean -f network_makefile; make REL=1 -f network_makefile;
+
+#AV_SCHEME
+cd ../libavscheme
+make clean -f hvs_makefile; make REL=1 -f hvs_makefile;
+
+#Video Core 
+cd ../libvcc
+make clean -f vcc_makefile; make REL=1 -f vcc_makefile;
+
+#cd libhash
+#make clean -f hash_makefile; make  -f hash_makefile;
+

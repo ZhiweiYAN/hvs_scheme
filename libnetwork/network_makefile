@@ -1,0 +1,51 @@
+###############################################
+# The makefile is desinged for the testbe of functions
+# Contact us: SSurui, ssurui@gmail.com; Jerod.yan, jerod.yan@gmail.com
+# #############################################
+
+PROJECT=hybrid_video_mixer_server
+
+#PLATFORM
+#ifdef PLATFORM_A
+#	CC=$(XXXX)/bin/xxxx-cc
+#	RESULT_DIR=../lib_dir_xxxxcc/
+#else (X86, GCC)
+	CC=gcc
+	RESULT_DIR=../lib_dir_gcc/
+#endif
+
+#RELEASE VERSION CONTROL
+ifdef REL
+	CFLAGS=-O2 -std=gnu99 
+else
+	CFLAGS=-g -Wall -std=gnu99 -DDEBUG -gdwarf-2 -g3
+endif
+
+#PACKETAGE TOOL
+AR=ar
+
+INC_DIR_FLAGS=-I./  \
+			  -I../ \
+			  -I../liblogerrors 
+
+LIB_OPTIONS= -lm 
+
+NETWORK_LIB=$(RESULT_DIR)libnetwork.a
+NETWORK_OBJS=network_socket.o
+
+#Compile and Package the video app core.
+$(NETWORK_LIB):$(NETWORK_OBJS)
+	@echo "\nCreating the Network Core Lib:"
+	$(AR) cq $@ $(NETWORK_OBJS); ranlib $@; rm -frv $(NETWORK_OBJS);
+
+$(NETWORK_OBJS):%.o:%.c
+	$(CC) -c $(CFLAGS) $(INC_DIR_FLAGS) $< -o $@	
+
+.PHONY:clean
+clean:
+	-rm -frv $(NETWORK_LIB)  $(NETWORK_OBJS)
+
+.PHONY:pp
+pp:
+	-find ./ -name "*" -print |egrep '\.cpp$$|\.c$$|\.h$$' |xargs astyle --style=linux -s -n; touch *.h *.c
+

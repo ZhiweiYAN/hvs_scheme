@@ -1,0 +1,62 @@
+###############################################
+# The makefile is desinged for the testbe of functions
+# Contact us: SSurui, ssurui@gmail.com; Jerod.yan, jerod.yan@gmail.com
+# #############################################
+
+PROJECT=hybrid_video_mixer_server
+
+#PLATFORM
+#ifdef PLATFORM_A
+#	CC=$(XXXX)/bin/xxxx-cc
+#	RESULT_DIR=../lib_dir_xxxxcc/
+#else (X86, GCC)
+	CC=gcc
+	RESULT_DIR=../lib_dir_gcc/
+#endif
+
+#RELEASE VERSION CONTROL
+ifdef REL
+	CFLAGS=-O2 -std=gnu99 
+else
+	CFLAGS=-g -Wall -std=gnu99 -DDEBUG -gdwarf-2 -g3
+endif
+
+#PACKETAGE TOOL
+AR=ar
+
+INC_DIR_FLAGS=-I. -I../ \
+			-I../liblogerrors \
+			-I../libnetwork \
+			-I../libvcc \
+
+LIB_OPTIONS=-L./ -lpthread -lm \
+			-L$(RESULT_DIR) \
+			-lnetwork \
+			-llogerrors
+
+AVSCHEME_LIB=$(RESULT_DIR)libavscheme.a
+AVSCHEME_OBJS=hvs_init.o \
+				manage_queue.o \
+				recv_av_packet.o \
+				video_decoder.o \
+				video_mixer.o \
+				video_encoder.o \
+				send_av_packet.o \
+				system_monitor.o \
+				worker_manager.o  
+
+#Compile and Package the video app core.
+$(AVSCHEME_LIB):$(AVSCHEME_OBJS)
+	@echo "\nCreating the Video App Core Lib:"
+	$(AR) cq $@ $(AVSCHEME_OBJS); ranlib $@; rm -frv $(AVSCHEME_OBJS);
+
+$(AVSCHEME_OBJS):%.o:%.c
+	$(CC) -c $(CFLAGS) $(INC_DIR_FLAGS) $< -o $@	
+
+.PHONY:clean
+clean:
+	-rm -frv $(AVSCHEME_LIB)  $(AVSCHEME_OBJS) 
+
+.PHONY:pp
+pp:
+	-find ./ -name "*" -print |egrep '\.cpp$$|\.c$$|\.h$$' |xargs astyle --style=linux -s -n; touch *.h *.c

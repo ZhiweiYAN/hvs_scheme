@@ -1,0 +1,31 @@
+file ./hvs
+break hvs_main.c:main
+#break hvs_init.c:132
+#break hvs_init.c:143
+#break manage_queue.c:60
+#break manage_queue.c:98
+#break manage_queue.c:358
+
+#break recv_av_packet.c:71
+#break recv_av_packet.c:153
+
+#break video_decoder.c:y
+#break video_decoder.c:166
+
+#break video_mixer.c:121
+#break video_mixer.c:Mix_av_frames
+#break video_mixer.c:141
+
+break video_encoder.c:136
+
+break send_av_packet.c:118
+break send_av_packet.c:84
+
+#break system_monitor.c:132
+#break system_monitor.c:Dameon_monitor
+#break system_monitor.c:Initialize_system_state_memory
+
+run
+set follow-fork-mode child
+set detach-on-fork on
+
